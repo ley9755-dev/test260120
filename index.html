@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>윤동주의 1941년: 시종(終始)의 길</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Application Configuration -->
+    <!-- Chosen Palette: Literary Sepia. Backgrounds: Warm Paper (#fdfbf7), Stone Gray (#e5e7eb). Accents: Ink Black (#1f2937), Muted Teal (#2c7a7b) for nature, Brick Red (#9b2c2c) for colonial tension. Typography: Noto Serif KR for headings (evoking literary manuscript), Noto Sans KR for body text. -->
+    
+    <!-- Application Structure Plan: 
+         1. **Hero Section**: Introduces the theme "1941, Yun Dong-ju's Path" with a focus on the 'End and Beginning' concept.
+         2. **Interactive Journey Dashboard**: The core of the app. A split-screen layout (on desktop) featuring:
+            - **Navigation Rail**: 4 distinct "Courses" derived from the report.
+            - **Content Context**: Dynamic text area explaining the historical and emotional significance of the selected location.
+            - **Visual Analytics**: A dynamic Chart.js Radar Chart showing the "Emotional Landscape" of that specific location (Nature vs. Colonial Pressure vs. Friendship vs. Introspection).
+         3. **Detail Modules**: Below the dashboard, specific interactive modules for each course.
+         4. **Reflection/Footer**: Summary of the project guide.
+         
+         WHY: This structure allows users to "travel" alongside the poet. Stacking images vertically ensures that each visual cue receives full attention before moving to the interactive dashboard.
+    -->
+
+    <!-- Visualization & Content Choices:
+         1. **Emotional Landscape Radar Chart (Chart.js)**: Compare the abstract "feelings" of each location.
+         2. **Productivity Bar Chart (Chart.js)**: Highlight the creative explosion in Nu-sang-dong.
+         3. **Vertical Image Stack**: Changed from grid to stack to prioritize sequential understanding of space and route.
+    -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #fdfbf7; 
+            color: #1f2937;
+        }
+        h1, h2, h3, h4, .serif-font {
+            font-family: 'Noto Serif KR', serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        .nav-item.active {
+            background-color: #1f2937;
+            color: #ffffff;
+            border-left: 4px solid #2c7a7b;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e0; 
+            border-radius: 3px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0; 
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">✒️</span>
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight text-gray-900 serif-font">윤동주의 1941년: 시종(終始)의 길</h1>
+            </div>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-500">
+                <a href="#dashboard" class="hover:text-gray-900 transition-colors">여정 탐험</a>
+                <a href="#details" class="hover:text-gray-900 transition-colors">상세 기록</a>
+                <a href="#guide" class="hover:text-gray-900 transition-colors">프로젝트 가이드</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Intro Section -->
+        <section class="text-center max-w-4xl mx-auto space-y-6">
+            <p class="text-teal-700 font-semibold tracking-wide uppercase text-sm">문학 기행 & 역사 체험</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 serif-font leading-tight">
+                "종점(終點)이 시점(始點)이 된다.<br>다시 시점이 종점이 된다."
+            </h2>
+            <p class="text-lg text-gray-600 leading-relaxed">
+                1941년, 연희전문학교 4학년이었던 윤동주는 누상동 하숙집에서 연희전문까지 긴 등굣길을 오갔습니다.
+                이 인터랙티브 가이드를 통해 식민지 지식인의 고뇌와 문학적 영감이 교차했던 4개의 코스를 탐험해보세요.
+            </p>
+            
+            <!-- Image Stack Wrapper (Updated to Vertical Stack) -->
+            <div class="flex flex-col gap-6 max-w-3xl mx-auto">
+                <!-- Image 1: Inwangsan -->
+                <div class="relative rounded-2xl overflow-hidden shadow-xl border border-gray-100 group">
+                    <img src="https://postfiles.pstatic.net/MjAyNTA3MjNfMTg1/MDAxNzUzMjMwNDg5NTQ5.z1C1PXlAZQ94e2O5X8z-Du8Iu0wP_XuPE4D6SRKpXlsg.VCiA-zp81IP3n8hfgDKjRGcNn078gE6QPKcfxf_lWkYg.JPEG/%EC%9C%A4%EB%8F%99%EC%A3%BC%EB%AC%B8%ED%95%99%EA%B4%80_%EC%9D%B8%EC%99%95%EC%82%B0%EC%9E%90%EB%9D%BD%EA%B8%B8.jpg?type=w966" 
+                         alt="윤동주 문학관 인왕산 자락길" 
+                         class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+                         onerror="this.src='https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white p-3 text-right">
+                        <p class="text-xs font-medium">윤동주 문학관과 인왕산 자락길</p>
+                    </div>
+                </div>
+
+                <!-- Image 2: Commute Map (Stacked below) -->
+                <div class="relative rounded-2xl overflow-hidden shadow-xl border border-gray-100 group">
+                    <img src="https://github.com/ley9755-dev/test260120/blob/main/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-02-27%20201746.png?raw=true" 
+                         alt="윤동주 등굣길 노선도 이미지" 
+                         class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+                         onerror="this.src='https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=1000&auto=format&fit=crop'">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white p-3 text-right">
+                        <p class="text-xs font-medium">윤동주의 등굣길 노선도 분석</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+            <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[600px]">
+                
+                <!-- Left Nav -->
+                <div class="lg:col-span-3 bg-gray-50 border-r border-gray-100 p-4 flex flex-col gap-2">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase px-2 mb-2">탐험 코스 선택</h3>
+                    <button onclick="app.setCourse(0)" id="nav-0" class="nav-item w-full text-left p-4 rounded-lg transition-all duration-200 group active">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-bold serif-font text-lg">코스 1</span>
+                            <span class="text-xl group-hover:scale-110 transition-transform">⛰️</span>
+                        </div>
+                        <div class="text-sm opacity-90">누상동 하숙집 & 인왕산</div>
+                    </button>
+                    <button onclick="app.setCourse(1)" id="nav-1" class="nav-item w-full text-left p-4 rounded-lg transition-all duration-200 group text-gray-600 hover:bg-gray-100">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-bold serif-font text-lg">코스 2</span>
+                            <span class="text-xl group-hover:scale-110 transition-transform">🚋</span>
+                        </div>
+                        <div class="text-sm opacity-90">효자동 종점 & 광화문</div>
+                    </button>
+                    <button onclick="app.setCourse(2)" id="nav-2" class="nav-item w-full text-left p-4 rounded-lg transition-all duration-200 group text-gray-600 hover:bg-gray-100">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-bold serif-font text-lg">코스 3</span>
+                            <span class="text-xl group-hover:scale-110 transition-transform">🚂</span>
+                        </div>
+                        <div class="text-sm opacity-90">경성역 & 아현터널</div>
+                    </button>
+                    <button onclick="app.setCourse(3)" id="nav-3" class="nav-item w-full text-left p-4 rounded-lg transition-all duration-200 group text-gray-600 hover:bg-gray-100">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-bold serif-font text-lg">코스 4</span>
+                            <span class="text-xl group-hover:scale-110 transition-transform">🎓</span>
+                        </div>
+                        <div class="text-sm opacity-90">연희전문학교</div>
+                    </button>
+                </div>
+
+                <!-- Center: Content -->
+                <div class="lg:col-span-5 p-8 flex flex-col justify-center bg-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-5 text-9xl serif-font select-none pointer-events-none">詩</div>
+                    <div id="content-area" class="fade-in relative z-10">
+                        <div class="mb-4">
+                            <span id="content-tag" class="inline-block px-3 py-1 bg-teal-100 text-teal-800 text-xs font-bold rounded-full mb-2">예술과 우정</span>
+                            <h2 id="content-title" class="text-3xl font-bold text-gray-900 serif-font mb-4">누상동 하숙집과 인왕산</h2>
+                        </div>
+                        <div id="content-body" class="prose prose-lg text-gray-600 custom-scroll max-h-[400px] overflow-y-auto pr-2"></div>
+                        <div class="mt-8 pt-6 border-t border-gray-100">
+                            <h4 class="text-sm font-bold text-gray-900 mb-2">📌 주요 포인트</h4>
+                            <ul id="content-points" class="space-y-2 text-sm text-gray-600"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Chart -->
+                <div class="lg:col-span-4 bg-gray-50 p-6 border-l border-gray-100 flex flex-col items-center justify-center">
+                    <h3 class="text-center font-bold text-gray-700 mb-6 serif-font">공간의 정서 분석</h3>
+                    <div class="chart-container">
+                        <canvas id="emotionRadarChart"></canvas>
+                    </div>
+                    <p class="text-xs text-center text-gray-400 mt-4 max-w-xs">* 정성적 기록을 바탕으로 시각화한 분석표입니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Content Modules -->
+        <section id="details" class="space-y-12">
+            <div id="module-literary" class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+                <div class="flex flex-col md:flex-row gap-8 items-start">
+                    <div class="flex-1">
+                        <h3 class="text-2xl font-bold text-gray-900 serif-font mb-4">📜 누상동 시기 집필 활동</h3>
+                        <p class="text-gray-600 mb-6">누상동 하숙 시절은 윤동주의 문학이 만개한 시기였습니다. 정병욱 선생과 문학을 논하며 마음의 안정을 얻었고, 이는 왕성한 창작 활동으로 이어졌습니다.</p>
+                        <div class="bg-teal-50 border-l-4 border-teal-500 p-4 mb-6">
+                            <p class="text-teal-900 italic font-medium">"동주의 시를 간직했다가 세상에 알려 줄 수 있게 한 일이라고 대답할 것이다." - 정병욱</p>
+                        </div>
+                    </div>
+                    <div class="flex-1 w-full">
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="poemsBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-xl font-bold text-gray-900 serif-font mb-6">🚋 등굣길 노선도</h3>
+                    <div class="relative pl-4 border-l-2 border-gray-200 space-y-8">
+                        <div class="relative group cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors" onclick="app.setCourse(0)">
+                            <div class="absolute -left-[25px] top-3 w-4 h-4 rounded-full bg-teal-500 border-4 border-white"></div>
+                            <h4 class="font-bold text-gray-800">누상동 (출발)</h4>
+                            <p class="text-sm text-gray-500">인왕산 자락, 수성동 계곡 산책</p>
+                        </div>
+                        <div class="relative group cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors" onclick="app.setCourse(1)">
+                            <div class="absolute -left-[25px] top-3 w-4 h-4 rounded-full bg-gray-400 border-4 border-white"></div>
+                            <h4 class="font-bold text-gray-800">효자동 종점 → 광화문</h4>
+                            <p class="text-sm text-gray-500">전차 탑승. 조선총독부를 지나는 길</p>
+                        </div>
+                        <div class="relative group cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors" onclick="app.setCourse(2)">
+                            <div class="absolute -left-[25px] top-3 w-4 h-4 rounded-full bg-gray-400 border-4 border-white"></div>
+                            <h4 class="font-bold text-gray-800">경성역 (환승) → 아현터널</h4>
+                            <p class="text-sm text-gray-500">화려한 역과 어두운 터널의 대비</p>
+                        </div>
+                        <div class="relative group cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors" onclick="app.setCourse(3)">
+                            <div class="absolute -left-[25px] top-3 w-4 h-4 rounded-full bg-gray-800 border-4 border-white"></div>
+                            <h4 class="font-bold text-gray-800">연희전문 (도착)</h4>
+                            <p class="text-sm text-gray-500">학문과 청춘의 종착지</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-900 text-white rounded-xl shadow-lg p-8 flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-6 opacity-10 text-6xl">🛤️</div>
+                    <h3 class="text-xl font-bold serif-font text-teal-400 mb-2">시대의 명암(明暗)</h3>
+                    <p class="text-gray-300 text-sm mb-6">코스 3: 아현터널 구간에서 목격한 현실</p>
+                    <div id="contrast-display" class="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/10">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs uppercase tracking-widest text-gray-400">관찰 대상</span>
+                            <div class="flex gap-2">
+                                <button onclick="app.toggleContrast('surface')" class="px-3 py-1 text-xs rounded bg-teal-600 hover:bg-teal-500">표면 (희극)</button>
+                                <button onclick="app.toggleContrast('deep')" class="px-3 py-1 text-xs rounded bg-red-800 hover:bg-red-700">내면 (비극)</button>
+                            </div>
+                        </div>
+                        <h4 id="contrast-title" class="text-xl font-bold mb-2">터널 공사장 트럭의 문구</h4>
+                        <p id="contrast-text" class="text-gray-300 leading-relaxed">"터널 공사장 일꾼들이 트럭에 '신경행', '북경행' 등을 써붙인 모습."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Project Guide -->
+        <section id="guide" class="bg-stone-100 rounded-2xl p-8 border-t-4 border-stone-300">
+            <h2 class="text-2xl font-bold text-gray-800 serif-font mb-6">💡 프로젝트 가이드 제언</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-lg shadow-sm">
+                    <h4 class="font-bold text-gray-900 mb-2">🗺️ 지도 매핑</h4>
+                    <p class="text-sm text-gray-600">수필 「종시」를 읽고 실제 이동 경로를 지도로 재구성합니다.</p>
+                </div>
+                <div class="bg-white p-5 rounded-lg shadow-sm">
+                    <h4 class="font-bold text-gray-900 mb-2">✍️ 창작 활동</h4>
+                    <p class="text-sm text-gray-600">산책로의 정취를 느끼며 자신만의 문장을 기록해봅니다.</p>
+                </div>
+                <div class="bg-white p-5 rounded-lg shadow-sm">
+                    <h4 class="font-bold text-gray-900 mb-2">🚂 역사 탐구</h4>
+                    <p class="text-sm text-gray-600">당시 교통 체계를 통해 근대 경성의 확장을 이해합니다.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-900 text-white py-12 mt-12 text-center">
+        <p class="serif-font text-xl mb-4">"오늘 밤에도 별이 바람에 스치운다."</p>
+        <p class="text-gray-500 text-sm">본 웹 애플리케이션은 윤동주의 1941년 행적을 기반으로 구성되었습니다.</p>
+    </footer>
+
+    <script>
+        const courses = [
+            {
+                id: 0,
+                title: "누상동 하숙집과 인왕산",
+                tag: "예술과 우정",
+                description: "<p class='mb-4'><strong>문학의 산실:</strong> 윤동주가 김송의 집에서 하숙하며 대표작 9편을 쏟아낸 시기입니다.</p><p>정병욱 선생과 함께 생활하며 음악을 듣고 산책하며 시상을 가다듬었습니다.</p>",
+                points: ["대표작 9편 집필 장소", "수성동 계곡 산책 루틴", "정병욱과의 깊은 우정"],
+                chartData: [90, 20, 95, 80, 10] 
+            },
+            {
+                id: 1,
+                title: "효자동 종점에서 광화문까지",
+                tag: "전차의 여정",
+                description: "<p class='mb-4'><strong>'종시'의 철학:</strong> 전차의 종점이 시점이 되는 순환을 보며 사유를 이끌어낸 구간입니다.</p><p>조선총독부 청사를 마주해야 했던 식민지의 현실이 투영되어 있습니다.</p>",
+                points: ["수필 「종시」의 배경", "식민 통치 기구 관찰", "효자동 전차 종점 터"],
+                chartData: [10, 90, 20, 60, 50]
+            },
+            {
+                id: 2,
+                title: "경성역에서 연희역까지",
+                tag: "기차와 터널",
+                description: "<p class='mb-4'><strong>철길 위의 비극:</strong> 아현터널 공사장 인부들을 보며 현실의 참혹함을 자각했습니다.</p><p>'북경행'이라는 문구를 통해 상상으로라도 위무받는 민중의 비극을 목격합니다.</p>",
+                points: ["경성역의 근대성 이면", "아현터널 공사장 목격", "비극적 현실의 직시"],
+                chartData: [10, 80, 40, 90, 70]
+            },
+            {
+                id: 3,
+                title: "연희전문학교",
+                tag: "청춘의 종착지",
+                description: "<p class='mb-4'><strong>시종의 완성:</strong> 등굣길의 종착지이자 시인이 문학적 성숙을 이룬 시발점입니다.</p><p>옛 연희역의 흔적과 캠퍼스의 숲은 시인에게 안식처가 되었습니다.</p>",
+                points: ["학문의 시점", "옛 연희역 위치 재구성", "윤동주 시비 답사"],
+                chartData: [70, 30, 80, 85, 60]
+            }
+        ];
+
+        let emotionRadarChart = null;
+        let poemsBarChart = null;
+
+        const app = {
+            init: function() {
+                this.setCourse(0);
+                this.initBarChart();
+            },
+            setCourse: function(id) {
+                const data = courses[id];
+                document.getElementById('content-tag').textContent = data.tag;
+                document.getElementById('content-title').textContent = data.title;
+                document.getElementById('content-body').innerHTML = data.description;
+                const pointsList = document.getElementById('content-points');
+                pointsList.innerHTML = data.points.map(p => `<li class='flex items-start gap-2'><span class='text-teal-600 mt-1'>✔</span><span>${p}</span></li>`).join('');
+                this.updateRadarChart(id);
+                document.querySelectorAll('.nav-item').forEach((el, idx) => {
+                    el.classList.toggle('active', idx === id);
+                    if(idx !== id) el.classList.add('text-gray-600');
+                });
+            },
+            updateRadarChart: function(id) {
+                const ctx = document.getElementById('emotionRadarChart').getContext('2d');
+                if(!emotionRadarChart) {
+                    emotionRadarChart = new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: ['자연/평화', '식민지 압박', '우정/교감', '내면 성찰', '근대성'],
+                            datasets: [{
+                                data: courses[id].chartData,
+                                fill: true,
+                                backgroundColor: 'rgba(44, 122, 123, 0.2)',
+                                borderColor: 'rgb(44, 122, 123)',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: { maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 100, ticks: { display: false } } }, plugins: { legend: { display: false } } }
+                    });
+                } else {
+                    emotionRadarChart.data.datasets[0].data = courses[id].chartData;
+                    emotionRadarChart.update();
+                }
+            },
+            initBarChart: function() {
+                const ctx = document.getElementById('poemsBarChart').getContext('2d');
+                poemsBarChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['누상동 하숙', '신촌/북아현', '기타'],
+                        datasets: [{ data: [9, 3, 2], backgroundColor: ['rgba(44, 122, 123, 0.8)', 'rgba(203, 213, 224, 0.5)', 'rgba(203, 213, 224, 0.5)'] }]
+                    },
+                    options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+                });
+            },
+            toggleContrast: function(mode) {
+                const title = document.getElementById('contrast-title');
+                const text = document.getElementById('contrast-text');
+                const container = document.getElementById('contrast-display');
+                if (mode === 'surface') {
+                    title.textContent = "터널 공사장 트럭의 문구 (희극)";
+                    text.innerHTML = "\"터널 공사장 일꾼들이 트럭에 '신경행', '북경행' 등을 써붙인 모습.\"";
+                    container.className = "bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/10";
+                } else {
+                    title.textContent = "조선인의 현실 (비극)";
+                    text.innerHTML = "\"비참하고 창백한 조선인이 참혹함을 상상으로 위무하는 장면. '내 상도 필연코 그 꼴'이라 자인한 성찰.\"";
+                    container.className = "bg-red-900/40 backdrop-blur-sm rounded-lg p-6 border border-red-500/30";
+                }
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>
